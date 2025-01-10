@@ -43,29 +43,8 @@
             <div class="settings">
                 <img src="/media/soundIcon.png" alt="sound" id="sound" />
             </div>
-            <h1>Select your poke warrior</h1>
-            <div class="search">
-                <input
-                    type="text"
-                    placeholder="Search Pokemon character"
-                    id="pokemonName"
-                    required
-                />
-                <div class="characterButton">
-                    <button onclick="fetchData()">Fetch Pokemon</button>
-                </div>
-            </div>
-            <img
-                src="/media/placeholder"
-                alt="PokemonSprite"
-                id="pokemonSprite"
-                class="pokemonSprite"
-                style="display: none"
-            />
-            <div class="characterStats">
-                <p class="names">Name: <span class="name"></span></p>
-                <p class="stats">Stats: <span class="stat"></span></p>
-            </div>
+            <h1>Pokémon Sprites</h1>
+            <div id="sprite-container"></div>
             <div class="selectCharacter">
                 <button>Select character</button>
             </div>
@@ -81,15 +60,14 @@
             <div class="fighter1">
                 <h2>Your fighter</h2>
                 <img
-                    src=""
-                    alt="PokemonSprite"
+                    alt="Pokemon Sprite"
                     id="pokemonSprite"
-                    class="pokemonSprite"
+                    class="pokemonSprite2"
                     style="display: none"
                 />
                 <div class="characterStats">
-                    <p class="names">Name: <span class="name"></span></p>
-                    <p class="stats">Stats: <span class="stat"></span></p>
+                    <p class="names">Name: <span class="battleName"></span></p>
+                    <p class="stats">Stats: <span class="battleStat"></span></p>
                 </div>
             </div>
             <div class="vs">

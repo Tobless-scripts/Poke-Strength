@@ -31,58 +31,158 @@ soundIcons.forEach((soundIcon) => {
     }
 });
 
-// Function to fetch Pokémon data based on user input
-fetchData();
-async function fetchData() {
+async function getPokemonSprites() {
+    const url = "https://pokeapi.co/api/v2/pokemon?limit=1010";
     try {
-        // Get the Pokémon name entered by the user and convert it to lowercase
-        const pokemonName = document
-            .getElementById("pokemonName")
-            .value.toLowerCase();
-
-        // Fetch Pokémon data using the PokeAPI
-        const response = await fetch(
-            `https://pokeapi.co/api/v2/pokemon/${pokemonName}`
-        );
-
-        // Check if the Pokémon exists
+        const response = await fetch(url);
         if (!response.ok) {
-            alert("Player is not a Pokémon"); // Alert if the Pokémon is invalid
+            throw new Error("Network response was not ok");
+        }
+        const data = await response.json();
+        const pokemonList = data.results;
+
+        const spritePromises = pokemonList.map(async (pokemon) => {
+            const pokemonResponse = await fetch(pokemon.url);
+            if (!pokemonResponse.ok) {
+                throw new Error("Network response was not ok");
+            }
+            const pokemonData = await pokemonResponse.json();
+            return {
+                name: pokemonData.name,
+                frontSprite: pokemonData.sprites.front_default,
+                backSprite: pokemonData.sprites.back_default,
+                stats: pokemonData.stats,
+            };
+        });
+        const sprites = await Promise.all(spritePromises);
+        displaySprites(sprites);
+    } catch (e) {
+        console.error(e.message);
+    }
+}
+
+function displaySprites(sprites) {
+    const container = document.getElementById("sprite-container");
+    let imageClicked = false;
+
+    sprites.forEach((pokemon) => {
+        const div = document.createElement("div");
+        div.classList.add("pokemonDiv");
+
+        const img = document.createElement("img");
+        img.src = pokemon.frontSprite;
+        img.alt = pokemon.name;
+        img.classList.add("className");
+        img.style.cursor = "pointer";
+
+        // Add click event to each image
+        img.addEventListener("click", () => {
+            // Remove border from all images
+            const allImages = container.querySelectorAll("img");
+            allImages.forEach((image) => {
+                image.style.border = "none"; // Remove border
+            });
+
+            // Add border to the clicked image
+            img.style.border = "3px solid #2e2e2e"; // Change color and size as needed
+
+            // Set imageClicked flag to true
+            imageClicked = true;
+
+            // Log the name and total stats to the console when the image is clicked
+            const playerStats = pokemon.stats.map((stat) => stat.base_stat);
+            const totalPlayerStat = playerStats.reduce(
+                (sum, stat) => sum + stat,
+                0
+            );
+
+            try {
+                // Clone the clicked image
+                let clonedImg = img.cloneNode(true); // Clone the clicked image directly
+
+                // Get the arena and battle image element and set its source
+                let arenaImg = document.querySelector(".pokemonSprite2");
+                arenaImg.src = clonedImg.src;
+                arenaImg.style.display = "block";
+
+                let battleImg = document.querySelector(".pokemonSprite");
+                battleImg.src = clonedImg.src;
+                battleImg.style.display = "block";
+            } catch (e) {
+                console.log("Error cloning image:", e.name);
+            }
+
+            try {
+                // Update battle name and stats when a Pokémon is clicked
+                const battleName = document.querySelector(".battleName");
+                if (battleName) {
+                    battleName.textContent = pokemon.name;
+                }
+
+                const battleStat = document.querySelector(".battleStat");
+                if (battleStat) {
+                    battleStat.textContent = totalPlayerStat;
+                }
+            } catch (e) {
+                console.log("Error updating battle section:", e.message);
+            }
+        });
+
+        div.appendChild(img);
+
+        // Create and append the name
+        const nameElement = document.createElement("p");
+        nameElement.textContent = pokemon.name;
+        div.appendChild(nameElement);
+
+        let statElement;
+        // Display the total stats for each Pokémon
+        if (pokemon.stats && pokemon.stats.length > 0) {
+            const playerStats = pokemon.stats.map((stat) => stat.base_stat);
+            let totalPlayerStat = playerStats.reduce(
+                (sum, stat) => sum + stat,
+                0
+            );
+
+            statElement = document.createElement("p");
+            statElement.textContent = `Total Stats: ${totalPlayerStat}`;
+            div.appendChild(statElement);
         }
 
-        const data = await response.json();
-        const pokemonSprite = data.sprites.front_default; // Get the Pokémon's sprite
+        // Append image and name to the div
+        container.appendChild(div);
+    });
 
-        // Update all elements with the class "pokemonSprite"
-        const imgElement = document.querySelectorAll(".pokemonSprite");
-        imgElement.forEach((img) => {
-            img.src = pokemonSprite; // Set the image source
-            img.style.display = "block"; // Make the image visible
+    if (arenaButton) {
+        arenaButton.addEventListener("click", () => {
+            if (!imageClicked) {
+                alert("Please choose an image!");
+            } else {
+                // Proceed with the action (e.g., start the battle)
+                console.log("Proceeding with selected Pokémon...");
+                showSection(gameArena);
+            }
         });
-
-        // Update all elements with the class "name" with the Pokémon name
-        const imgName = document.querySelectorAll(".name");
-        imgName.forEach((name) => {
-            name.textContent = data.name;
-        });
-
-        // Calculate the total base stats of the Pokémon
-        const stats = data.stats.map((stat) => stat.base_stat);
-        let totalBaseStats = stats.reduce((sum, stat) => {
-            return sum + stat;
-        });
-
-        // Update all elements with the class "stat" with the total base stats
-        const imgStats = document.querySelectorAll(".stat");
-        imgStats.forEach((stat) => {
-            stat.textContent = totalBaseStats;
-        });
-    } catch (e) {
-        // Log any errors
-        console.error(e);
     }
-    pokemonName.value = ""; // Clear the input field
+
+    if (arenaButton) {
+        arenaButton.addEventListener("click", () => {
+            if (!imageClicked) {
+                alert("Please choose an image");
+            } else {
+                // Proceed with the next action (e.g., start the battle)
+                console.log("Proceeding with selected Pokémon");
+                showSection(gameArena);
+            }
+        });
+    }
+
+    // Append the entire div (image + name + stats) to the container
+    container.appendChild(div);
 }
+
+// Call the function to fetch and display the sprites
+getPokemonSprites();
 
 // Function to fetch a random Pokémon from the PokeAPI
 async function getRandomPokemon() {
@@ -178,29 +278,63 @@ function startCountdown() {
 
                     // Now, add event listener to the button after it's created
                     button.addEventListener("click", () => {
-                        showSection(resultDiv); // Show the result section
+                        showSection(resultDiv);
+
                         const playerOneResults =
-                            document.querySelector(".stat");
+                            document.querySelector(".battleStat");
                         const computerResults =
                             document.querySelector(".computerStat");
 
-                        // Convert innerHTML to numbers for proper comparison
-                        const playerOneScore = parseInt(
-                            playerOneResults.innerHTML
-                        );
-                        const computerScore = parseInt(
-                            computerResults.innerHTML
-                        );
-                        const score = document.querySelector(".reveal");
+                        // Ensure playerOneResults and computerResults exist
+                        if (playerOneResults && computerResults) {
+                            // Convert innerHTML to numbers for proper comparison
+                            const playerOneScore = playerOneResults.textContent;
 
-                        if (playerOneScore > computerScore) {
-                            score.textContent =
-                                "Congratulations, you win! 😁🥳";
-                        } else if (playerOneScore < computerScore) {
-                            score.textContent =
-                                "You lose, the computer wins. 😔😔";
+                            if (isNaN(playerOneScore)) {
+                                console.error(
+                                    "Player One's score is not valid:",
+                                    playerOneScore
+                                );
+                            } else {
+                                console.log(
+                                    "Player One's score:",
+                                    playerOneScore
+                                );
+                            }
+
+                            const computerScore = parseInt(
+                                computerResults.innerHTML
+                            );
+
+                            console.log(playerOneScore); // Log player score to check value
+                            console.log(computerScore); // Log computer score to check value
+
+                            const score = document.querySelector(".reveal");
+
+                            // Ensure score element exists
+                            if (score) {
+                                if (
+                                    isNaN(playerOneScore) ||
+                                    isNaN(computerScore)
+                                ) {
+                                    score.textContent =
+                                        "There was an issue calculating the scores.";
+                                } else if (playerOneScore > computerScore) {
+                                    score.textContent =
+                                        "Congratulations, you win! 😁🥳";
+                                } else if (playerOneScore < computerScore) {
+                                    score.textContent =
+                                        "You lose, the computer wins. 😔😔";
+                                } else {
+                                    score.textContent = "Oops, it's a draw!";
+                                }
+                            } else {
+                                console.error("Score element not found.");
+                            }
                         } else {
-                            score.textContent = "Oops, it's a draw!";
+                            console.error(
+                                "One of the stat elements not found."
+                            );
                         }
                     });
                 }, 5000); // Delay the display of message by 5 seconds
@@ -219,7 +353,7 @@ vsButton.addEventListener("click", () => {
 
         startCountdown(); // Start the countdown
     }
-    audio.src = "/gamePlay.mp3";
+    audio.src = "/media/gamePlay.mp3";
 });
 
 // Call the function to fetch a random Pokémon when the page loads
@@ -258,15 +392,6 @@ window.onload = () => showSection(gameIntro);
 
 // Event listeners to switch sections
 singlePlayerButton.addEventListener("click", () => showSection(singlePlayer));
-arenaButton.addEventListener("click", () => {
-    const inputCheck = document.getElementById("pokemonSprite");
-
-    if (inputCheck.src === "" || inputCheck.src.endsWith("placeholder.png")) {
-        alert("Please choose a player");
-    } else {
-        showSection(gameArena); // Show the single player section
-    }
-});
 
 battleButton.addEventListener("click", () => showSection(battleField));
 // When the replay button is clicked
@@ -298,6 +423,7 @@ prevButtons.forEach((button) => {
         if (audio) {
             audio.src = "/gameIntro.mp3";
         }
+        location.reload();
     });
 });
 
