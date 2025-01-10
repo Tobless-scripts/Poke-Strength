@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Poke Strength</title>
+        <link rel="icon" href="/favicon.webp" type="image/webp" />
+        <meta
+            name="description"
+            content="Embark on an epic Pokémon adventure! Capture, train, and battle your favorite Pokémon in this exciting game. Explore vibrant worlds, challenge trainers, and become a Pokémon Master. Play now!"
+        />
+        <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+        <meta
+            name="keywords"
+            content="Pokémon game, capture Pokémon, Pokémon battles, train Pokémon, Pokémon adventure, battle trainers, Pokémon world, free Pokémon game, pocket monsters, fantasy game, Pokémon Master"
+        />
+        <meta name="author" content="Tobless-scripts" />
+        <meta name="robots" content="index, follow" />
+        <link rel="stylesheet" href="style.css" />
+    </head>
+    <body>
+        <div class="gameIntro">
+            <audio id="backgroundMusic" autoplay loop hidden>
+                <source src="/media/gameIntro.mp3" type="audio/mp3" />
+            </audio>
+            <div class="settings">
+                <img src="/media/soundIcon.png" alt="sound" id="sound" />
+            </div>
+
+            <h1>Welcome to Poke Strength</h1>
+            <img src="/media/image.jpeg" alt="pokemon" />
+            <div class="buttons">
+                <h2>Select Player Mode</h2>
+                <button class="singlePlay">Single Player</button>
+                <button class="multiplay">Multiplayer</button>
+            </div>
+        </div>
+
+        <div class="singlePlayer">
+            <div class="prev">
+                <img src="/media/back.png" alt="back" />
+            </div>
+            <div class="settings">
+                <img src="/media/soundIcon.png" alt="sound" id="sound" />
+            </div>
+            <h1>Select your poke warrior</h1>
+            <div class="search">
+                <input
+                    type="text"
+                    placeholder="Search Pokemon character"
+                    id="pokemonName"
+                    required
+                />
+                <div class="characterButton">
+                    <button onclick="fetchData()">Fetch Pokemon</button>
+                </div>
+            </div>
+            <img
+                src="/media/placeholder"
+                alt="PokemonSprite"
+                id="pokemonSprite"
+                class="pokemonSprite"
+                style="display: none"
+            />
+            <div class="characterStats">
+                <p class="names">Name: <span class="name"></span></p>
+                <p class="stats">Stats: <span class="stat"></span></p>
+            </div>
+            <div class="selectCharacter">
+                <button>Select character</button>
+            </div>
+        </div>
+
+        <div class="gameArena">
+            <div class="prev">
+                <img src="/media/back.png" alt="back" />
+            </div>
+            <div class="settings">
+                <img src="/media/soundIcon.png" alt="sound" id="sound" />
+            </div>
+            <div class="fighter1">
+                <h2>Your fighter</h2>
+                <img
+                    src=""
+                    alt="PokemonSprite"
+                    id="pokemonSprite"
+                    class="pokemonSprite"
+                    style="display: none"
+                />
+                <div class="characterStats">
+                    <p class="names">Name: <span class="name"></span></p>
+                    <p class="stats">Stats: <span class="stat"></span></p>
+                </div>
+            </div>
+            <div class="vs">
+                <h1>VS</h1>
+                <button class="vs2">Start game</button>
+            </div>
+            <div class="fighter2">
+                <h2>Computer fighter</h2>
+                <img
+                    id="pokemonSprite"
+                    alt="Pokemon Sprite"
+                    style="display: none"
+                    class="computerSprite"
+                />
+                <div class="characterStats">
+                    <p class="names">
+                        Name: <span class="computerName"></span>
+                    </p>
+                    <p class="stats">
+                        Stats: <span class="computerStat"></span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="battleField">
+            <div class="settings">
+                <img src="/media/soundIcon.png" alt="sound" id="sound" />
+            </div>
+            <div class="fighter3">
+                <h2>Your fighter</h2>
+                <img
+                    src=""
+                    alt="PokemonSprite"
+                    id="pokemonSprite"
+                    class="pokemonSprite"
+                    style="display: none"
+                />
+            </div>
+            <div id="centerDiv">5</div>
+            <div class="fighter4">
+                <h2>Computer fighter</h2>
+                <img
+                    id="pokemonSprite"
+                    alt="Pokemon Sprite"
+                    style="display: none"
+                    class="computerSprite"
+                />
+            </div>
+        </div>
+
+        <div class="results">
+            <div class="settings">
+                <img src="/media/soundIcon.png" alt="sound" id="sound" />
+            </div>
+            <h2>Game Over</h2>
+            <p class="reveal"></p>
+            <button id="btn">Replay</button>
+            <button id="btn2">Home</button>
+        </div>
+    </body>
+    <script src="script.js"></script>
+</html>
