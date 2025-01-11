@@ -5,31 +5,31 @@ const soundIcons = document.querySelectorAll("#sound");
 const audio = document.getElementById("backgroundMusic");
 
 // Loop through each sound icon and attach event listeners
-soundIcons.forEach((soundIcon) => {
-    try {
-        // Set the initial icon state based on whether the audio is playing or paused
-        if (!audio.paused) {
-            soundIcon.src = "/media/soundIcon.png"; // Set sound icon when audio is playing
-        }
+// soundIcons.forEach((soundIcon) => {
+//     try {
+//         // Set the initial icon state based on whether the audio is playing or paused
+//         if (!audio.paused) {
+//             soundIcon.src = "/media/soundIcon.png"; // Set sound icon when audio is playing
+//         }
 
-        // Add a click event listener to toggle audio playback
-        soundIcon.addEventListener("click", () => {
-            if (audio.paused) {
-                audio.play(); // Play audio
-                soundIcon.src = "/media/soundIcon.png"; // Change icon to playing state
-            } else {
-                audio.pause(); // Pause audio
-                soundIcon.src = "/media/pause.png"; // Change icon to paused state
-            }
-        });
-    } catch (e) {
-        // Log and alert if an error occurs
-        console.log("Couldn't toggle audio for this icon. Error:", e);
-        alert(
-            "Audio functionality is currently unavailable for one of the icons."
-        );
-    }
-});
+//         // Add a click event listener to toggle audio playback
+//         soundIcon.addEventListener("click", () => {
+//             if (audio.paused) {
+//                 audio.play(); // Play audio
+//                 soundIcon.src = "/media/soundIcon.png"; // Change icon to playing state
+//             } else {
+//                 audio.pause(); // Pause audio
+//                 soundIcon.src = "/media/pause.png"; // Change icon to paused state
+//             }
+//         });
+//     } catch (e) {
+//         // Log and alert if an error occurs
+//         console.log("Couldn't toggle audio for this icon. Error:", e);
+//         alert(
+//             "Audio functionality is currently unavailable for one of the icons."
+//         );
+//     }
+// });
 
 async function getPokemonSprites() {
     const url = "https://pokeapi.co/api/v2/pokemon?limit=1010";
@@ -130,10 +130,82 @@ function displaySprites(sprites) {
 
         div.appendChild(img);
 
-        // Create and append the name
-        const nameElement = document.createElement("p");
-        nameElement.textContent = pokemon.name;
-        div.appendChild(nameElement);
+        const ival = document.getElementById("value");
+        try {
+            ival.addEventListener("input", (event) => {
+                debouncedSearch(event.target.value);
+            });
+
+            // Create an empty array to store Pokémon names
+            const items = [];
+
+            // Create a <p> element for the Pokémon name
+            const nameElement = document.createElement("p");
+            nameElement.textContent = pokemon.name;
+
+            // Add the Pokémon name to the array
+            items.push(pokemon.name);
+
+            // Append the name element to the desired div
+            div.appendChild(nameElement);
+
+            // Log the array to confirm the names are being added
+            console.log(items);
+
+            function showSuggestions(query) {
+                const suggestionList = document.getElementById("display");
+                // suggestionList.innerHTML = "";
+                suggestionList.style.display = "block";
+
+                if (query) {
+                    // Ensure items is defined and is an array
+                    const filteredItems = items.filter((item) =>
+                        item.toLowerCase().includes(query.toLowerCase())
+                    );
+
+                    try {
+                        if (filteredItems.length > 0) {
+                            suggestionList.innerHTML = "";
+
+                            filteredItems.forEach((item) => {
+                                const li = document.createElement("li"); // Create <li> elements
+                                li.textContent = item;
+                                li.style.cursor = "pointer";
+
+                                li.addEventListener("click", () => {
+                                    const valueContent =
+                                        document.getElementById("value");
+                                    if (valueContent) {
+                                        valueContent.value = item;
+                                        suggestionList.innerHTML = ""; // Hide suggestions
+                                    }
+                                });
+
+                                suggestionList.appendChild(li); // Append to the suggestion list
+                            });
+                        }
+                    } catch (error) {
+                        console.error(
+                            `Error: ${error.name} - ${error.message}`
+                        );
+                    }
+                }
+            }
+
+            function debounce(func, delay) {
+                let timeout;
+                return function (...args) {
+                    clearTimeout(timeout);
+                    timeout = setTimeout(() => {
+                        func.apply(this, args);
+                    }, delay);
+                };
+            }
+
+            const debouncedSearch = debounce(showSuggestions, 500);
+        } catch (error) {
+            console.log(error);
+        }
 
         let statElement;
         // Display the total stats for each Pokémon

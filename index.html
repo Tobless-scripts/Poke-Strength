@@ -20,7 +20,7 @@
     </head>
     <body>
         <div class="gameIntro">
-            <audio id="backgroundMusic" autoplay loop hidden>
+            <audio id="backgroundMusic" loop hidden>
                 <source src="/media/gameIntro.mp3" type="audio/mp3" />
             </audio>
             <div class="settings">
@@ -32,7 +32,7 @@
             <div class="buttons">
                 <h2>Select Player Mode</h2>
                 <button class="singlePlay">Single Player</button>
-                <button class="multiplay">Multiplayer</button>
+                <!-- <button class="multiplay">Multiplayer</button> -->
             </div>
         </div>
 
@@ -44,6 +44,16 @@
                 <img src="/media/soundIcon.png" alt="sound" id="sound" />
             </div>
             <h1>Pokémon Sprites</h1>
+
+            <div class="inputDiv">
+                <input
+                    type="text"
+                    id="value"
+                    placeholder="Search for a fighter"
+                />
+                <ul id="display"></ul>
+            </div>
+
             <div id="sprite-container"></div>
             <div class="selectCharacter">
                 <button>Select character</button>
